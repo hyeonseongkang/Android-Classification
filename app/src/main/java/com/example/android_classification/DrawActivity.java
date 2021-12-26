@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.util.Pair;
 import android.view.View;
 import android.widget.Button;
@@ -12,6 +13,7 @@ import android.widget.TextView;
 
 import com.divyanshu.draw.widget.DrawView;
 
+import java.io.IOException;
 import java.util.Locale;
 
 public class DrawActivity extends AppCompatActivity {
@@ -21,6 +23,8 @@ public class DrawActivity extends AppCompatActivity {
     private DrawView drawView;
     private Button classifyButton, clearButton;
     private TextView resultText;
+
+    Classifier classifier;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,5 +54,12 @@ public class DrawActivity extends AppCompatActivity {
                 drawView.clearCanvas();
             }
         });
+
+        classifier = new Classifier(this);
+        try {
+            classifier.init();
+        } catch (IOException e) {
+            Log.d(TAG, e.toString());
+        }
     }
 }
