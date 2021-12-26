@@ -38,4 +38,5 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
 
     implementation 'com.github.divyanshub024:AndroidDraw:v0.1'
+    implementation 'org.tensorflow:tensorflow-lite:2.4.0'
 }
