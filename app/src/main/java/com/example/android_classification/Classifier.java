@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.res.AssetFileDescriptor;
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
+import android.util.Pair;
 
 import org.tensorflow.lite.Interpreter;
 import org.tensorflow.lite.Tensor;
@@ -24,6 +25,7 @@ public class Classifier {
 
     // 모델 입력 크기 변수
     int modelInputWidth, modelInputHeight, modelInputChannel;
+    int modelOutputClasses;
 
     public Classifier(Context context) {
         this.context = context;
@@ -58,6 +60,10 @@ public class Classifier {
         modelInputChannel = inputShape[0];
         modelInputWidth = inputShape[1];
         modelInputHeight = inputShape[2];
+
+        Tensor outputTensor = interpreter.getOutputTensor(0);
+        int[] outputShape = outputTensor.shape();
+        modelOutputClasses = outputShape[1];
     }
 
     // 이미지 크기 변환
@@ -85,6 +91,34 @@ public class Classifier {
         }
 
         return byteBuffer;
+    }
+
+    // 손글씨 분류 모델 추론
+    public Pair<Integer, Float> classify(Bitmap image) {
+        ByteBuffer buffer = convertBitmapToGrayByteBuffer(resizeBitmap(image));
+        float[][] result = new float[1][modelOutputClasses];
+        interpreter.run(buffer, result);
+        return argmax(result[0]);
+    }
+
+    // 추론 결과 해석
+    private Pair<Integer, Float> argmax(float[] array) {
+        int argmax = 0;
+        float max = array[0];
+        for(int i = 0; i < array.length; i++) {
+            float f = array[i];
+            if (f > max) {
+                argmax = i;
+                max = f;
+            }
+        }
+        return new Pair<>(argmax, max);
+    }
+
+    // interpreter 자원 정리
+    public void finish() {
+        if (interpreter != null)
+            interpreter.close();
     }
 
 }

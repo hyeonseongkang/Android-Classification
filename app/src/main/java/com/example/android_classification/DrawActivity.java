@@ -45,6 +45,9 @@ public class DrawActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Bitmap image = drawView.getBitmap();
 
+                Pair<Integer, Float> res = classifier.classify(image);
+                String outputString = String.format(Locale.ENGLISH, "%d, %.0f%%", res.first, res.second * 100.0f);
+                resultText.setText(outputString);
             }
         });
 
@@ -61,5 +64,11 @@ public class DrawActivity extends AppCompatActivity {
         } catch (IOException e) {
             Log.d(TAG, e.toString());
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        classifier.finish();
+        super.onDestroy();
     }
 }
