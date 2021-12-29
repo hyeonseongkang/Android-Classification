@@ -19,7 +19,7 @@ public class Classifier {
 
     Context context;
 
-    private static final String MODEL_NAME = "keras_model.tflite";
+    private static final String MODEL_NAME = "keras_model_cnn.tflite";
 
     Interpreter interpreter = null;
 
