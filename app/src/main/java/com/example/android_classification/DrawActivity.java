@@ -22,7 +22,7 @@ public class DrawActivity extends AppCompatActivity {
 
     private DrawView drawView;
     private Button classifyButton, clearButton;
-    private TextView resultText;
+    private TextView resultNumber, resultProbability;
 
     Classifier classifier;
 
@@ -34,7 +34,8 @@ public class DrawActivity extends AppCompatActivity {
         drawView = (DrawView) findViewById(R.id.drawView);
         classifyButton = (Button) findViewById(R.id.classifyButton);
         clearButton = (Button) findViewById(R.id.clearButton);
-        resultText = (TextView) findViewById(R.id.resultText);
+        resultNumber = (TextView) findViewById(R.id.resultNumber);
+        resultProbability = (TextView) findViewById(R.id.resultProbability);
 
         drawView.setStrokeWidth(100.0f);
         drawView.setBackgroundColor(Color.BLACK);
@@ -43,11 +44,17 @@ public class DrawActivity extends AppCompatActivity {
         classifyButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                String number;
+                String probability;
+
                 Bitmap image = drawView.getBitmap();
 
                 Pair<Integer, Float> res = classifier.classify(image);
-                String outputString = String.format(Locale.ENGLISH, "%d, %.0f%%", res.first, res.second * 100.0f);
-                resultText.setText(outputString);
+                number = String.valueOf(res.first);
+                probability = String.format("%.0f%%", res.second * 100.0f);
+
+                resultNumber.setText(number);
+                resultProbability.setText(probability);
             }
         });
 
@@ -55,6 +62,8 @@ public class DrawActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 drawView.clearCanvas();
+                resultNumber.setText("");
+                resultProbability.setText("");
             }
         });
 
